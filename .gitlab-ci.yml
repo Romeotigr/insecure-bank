@@ -1,0 +1,3 @@
+git add .gitlab-ci.yml
+git commit -m "Added .gitlab-ci.yml for CI/CD with Semgrep and Dependency Check"
+git push origin master
