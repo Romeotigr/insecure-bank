@@ -1,3 +1,27 @@
-git add .gitlab-ci.yml
-git commit -m "Added .gitlab-ci.yml for CI/CD with Semgrep and Dependency Check"
-git push origin master
+stages:
+  - lint
+  - security
+
+semgrep:
+  stage: lint
+  image: returntocorp/semgrep:latest
+  script:
+    - semgrep --config "p/r2c-ci" --json > semgrep-results.json
+  artifacts:
+    paths:
+      - semgrep-results.json
+    expire_in: 1 week
+  only:
+    - branches
+
+owasp-dependency-check:
+  stage: security
+  image: owasp/dependency-check:latest
+  script:
+    - dependency-check --scan ./ --out . --format JSON
+  artifacts:
+    paths:
+      - dependency-check-report.json
+    expire_in: 1 week
+  only:
+    - branches
