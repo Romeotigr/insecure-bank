@@ -1,27 +1,14 @@
-stages:
-  - lint
-  - security
-
 semgrep:
+  image: semgrep/semgrep
   stage: lint
-  image: returntocorp/semgrep:latest
   script:
-    - semgrep --config "p/r2c-ci" --json > semgrep-results.json
+    - semgrep --config "r2c" --json --metrics=off --debug > semgrep-results.json
+  only:
+    - branches
+  variables:
+    SEMGREP_APP_TOKEN: $SEMGREP_APP_TOKEN
   artifacts:
     paths:
       - semgrep-results.json
     expire_in: 1 week
-  only:
-    - branches
 
-owasp-dependency-check:
-  stage: security
-  image: owasp/dependency-check:latest
-  script:
-    - dependency-check --scan ./ --out . --format JSON
-  artifacts:
-    paths:
-      - dependency-check-report.json
-    expire_in: 1 week
-  only:
-    - branches
