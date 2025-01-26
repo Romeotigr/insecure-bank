@@ -1,3 +1,7 @@
+stages:
+  - lint
+  - security
+
 semgrep:
   image: semgrep/semgrep
   stage: lint
@@ -10,5 +14,15 @@ semgrep:
   artifacts:
     paths:
       - semgrep-results.json
+    expire_in: 1 week
+
+owasp-dependency-check:
+  stage: security
+  image: owasp/dependency-check:latest
+  script:
+    - dependency-check --scan ./ --out ./reports --format JSON
+  artifacts:
+    paths:
+      - reports/dependency-check-report.json
     expire_in: 1 week
 
